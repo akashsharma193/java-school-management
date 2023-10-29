@@ -8,4 +8,6 @@ import com.project.school.management.entity.School;
 @Repository
 public interface SchoolRepository extends JpaRepository<School, Long> {
 
+	School findByNameIgnoreCase(String name);
+
 }

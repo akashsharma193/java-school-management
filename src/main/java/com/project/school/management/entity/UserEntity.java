@@ -1,14 +1,11 @@
 package com.project.school.management.entity;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.school.management.enums.Gender;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -29,49 +25,57 @@ public class UserEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "firstName", nullable = false)
+	@Column(name = "firstName", nullable = true)
 	private String firstName;
 
-	@Column(name = "lastName", nullable = false)
+	@Column(name = "lastName", nullable = true)
 	private String lastName;
 
-	@Column(name = "fatherName", nullable = false)
+	@Column(name = "fatherName", nullable = true)
 	private String fatherName;
 
-	@Column(name = "motherName", nullable = false)
+	@Column(name = "motherName", nullable = true)
 	private String motherName;
 
-	@Column(name = "gender", nullable = false)
+	@Column(name = "gender", nullable = true)
 	private Gender gender;
 
-	@Column(name = "dateOfBirth", nullable = false)
+	@Column(name = "dateOfBirth", nullable = true)
 	private Date dateOfBirth;
 
-	@Column(name = "houseNumber", nullable = false)
+	@Column(name = "houseNumber", nullable = true)
 	private String houseNumber;
 
-	@Column(name = "street", nullable = false)
+	@Column(name = "street", nullable = true)
 	private String street;
 
-	@Column(name = "city", nullable = false)
+	@Column(name = "city", nullable = true)
 	private String city;
 
-	@Column(name = "state", nullable = false)
+	@Column(name = "state", nullable = true)
 	private String state;
 
-	@Column(name = "pinCode", nullable = false)
+	@Column(name = "pinCode", nullable = true)
 	private String pinCode;
 
-	@Column(name = "country", nullable = false)
+	@Column(name = "country", nullable = true)
 	private String country;
 
-	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "class_id", insertable = false, updatable = false)
+	@ManyToOne(targetEntity = ClassEntity.class, fetch = FetchType.EAGER)
 	private ClassEntity className;
 
-	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-	@ManyToOne(fetch = FetchType.LAZY)
+	@Column(name = "class_id")
+	@JsonIgnore
+	private Long classId;
+
+	@JoinColumn(name = "role_id", insertable = false, updatable = false)
+	@ManyToOne(targetEntity = Role.class, fetch = FetchType.EAGER)
 	private Role role;
+
+	@Column(name = "role_id")
+	@JsonIgnore
+	private Long roleId;
 
 	@Column(name = "email", nullable = false)
 	private String email;
@@ -91,17 +95,15 @@ public class UserEntity {
 	@Column(name = "is_parent", nullable = true)
 	private List<String> isParent;
 
-	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "school_id", insertable = false, updatable = false)
+	@ManyToOne(targetEntity = School.class, fetch = FetchType.EAGER)
 	private School school;
 
-	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-	@JsonManagedReference
-	@OneToMany(cascade = CascadeType.MERGE)
-	@JoinColumn(name = "user_id", referencedColumnName = "id")
-	private List<Book> book = new ArrayList<>();
+	@Column(name = "school_id")
+	@JsonIgnore
+	private Long schoolId;
 
-	@Column(name = "isActive", nullable = false)
+	@Column(name = "isActive", nullable = true)
 	private Boolean isActive;
 
 }

@@ -3,10 +3,13 @@ package com.project.school.management.serviceImpl;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.school.management.constant.Message;
 import com.project.school.management.entity.School;
+import com.project.school.management.exception.AlreadyExistException;
 import com.project.school.management.exception.NotExist;
 import com.project.school.management.repository.SchoolRepository;
 import com.project.school.management.service.SchoolService;
@@ -19,6 +22,12 @@ public class SchoolServiceImpl implements SchoolService {
 
 	@Override
 	public School save(School school) {
+		if (ObjectUtils.isNotEmpty(school.getId())) {
+			return this.schoolRepository.save(school);
+		}
+		if (ObjectUtils.isNotEmpty(this.schoolRepository.findByNameIgnoreCase(school.getName()))) {
+			throw new AlreadyExistException(Message.SCHOOL_ALREADY_EXIST);
+		}
 		return this.schoolRepository.save(school);
 	}
 
@@ -33,7 +42,7 @@ public class SchoolServiceImpl implements SchoolService {
 		if (data.isPresent()) {
 			return data.get();
 		}
-		throw new NotExist();
+		throw new NotExist(Message.SCHOOL_NOT_EXIST);
 	}
 
 }

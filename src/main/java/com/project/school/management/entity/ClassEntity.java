@@ -25,10 +25,6 @@ public class ClassEntity {
 	@Column(name = "name", nullable = false)
 	private String name;
 
-//	@OneToOne(cascade = CascadeType.MERGE)
-//	@JoinColumn(name = "section_id", referencedColumnName = "id")
-//	Section section;
-
 	@Column(name = "section", nullable = false)
 	private String section;
 
