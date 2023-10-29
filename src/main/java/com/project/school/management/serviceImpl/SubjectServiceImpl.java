@@ -22,6 +22,9 @@ public class SubjectServiceImpl implements SubjectService {
 
 	@Override
 	public Subject save(Subject subject) {
+		if (ObjectUtils.isNotEmpty(subject.getId())) {
+			return this.subjectRepository.save(subject);
+		}
 		if (ObjectUtils.isNotEmpty(this.subjectRepository.findBySubjectIgnoreCase(subject.getSubject()))) {
 			throw new AlreadyExistException(Message.SUBJECT_ALREADY_EXIST);
 		}
@@ -34,7 +37,7 @@ public class SubjectServiceImpl implements SubjectService {
 	}
 
 	@Override
-	public Subject getAddress(Long id) {
+	public Subject getSubject(Long id) {
 		Optional<Subject> data = this.subjectRepository.findById(id);
 		if (data.isPresent()) {
 			return data.get();

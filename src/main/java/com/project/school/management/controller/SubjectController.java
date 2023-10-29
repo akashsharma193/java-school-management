@@ -44,7 +44,7 @@ public class SubjectController {
 	public ResponseEntity<Object> getSubject(@PathVariable Long id) {
 		Response response = new Response();
 		response.succeed();
-		response.setData(subjectService.getAddress(id));
+		response.setData(subjectService.getSubject(id));
 		return ResponseEntity.ok().body(response);
 
 	}

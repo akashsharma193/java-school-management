@@ -15,6 +15,7 @@ import com.project.school.management.entity.UserEntity;
 import com.project.school.management.exception.AccessDenied;
 import com.project.school.management.exception.InvalidArgumentException;
 import com.project.school.management.exception.UserNotFoundException;
+import com.project.school.management.repository.RoleRepository;
 import com.project.school.management.repository.UserRepository;
 import com.project.school.management.request.LoginRequest;
 import com.project.school.management.request.UserRequest;
@@ -25,6 +26,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private RoleRepository roleRepository;
 
 	@Override
 	public UserEntity saveUserDetail(UserRequest userRequest) {
@@ -45,7 +49,8 @@ public class UserServiceImpl implements UserService {
 		user.setGender(userRequest.getGender());
 		user.setPassword(bCrypt.encode(userRequest.getPassword()));
 		user.setUserName(username);
-		user.setUserId(generateUserId(userRequest.getRole()));
+		user.setUserId(generateUserId(userRequest.getRoleId()));
+
 		user.setHouseNumber(userRequest.getHouseNumber());
 		user.setStreet(userRequest.getStreet());
 		user.setCity(userRequest.getCity());
@@ -53,12 +58,12 @@ public class UserServiceImpl implements UserService {
 		user.setPinCode(userRequest.getPinCode());
 		user.setCountry(userRequest.getCountry());
 
-		user.setClassName(userRequest.getClassName());
-		user.setBook(userRequest.getBook());
+		user.setClassId(userRequest.getClassId());
+		// user.setBook(userRequest.getBook());
 		user.setIsActive(userRequest.getIsActive());
 
-		user.setRole(userRequest.getRole());
-		user.setSchool(userRequest.getSchool());
+		user.setRoleId(userRequest.getRoleId());
+		user.setSchoolId(userRequest.getSchoolId());
 		userRepository.save(user);
 		return user;
 
@@ -119,13 +124,20 @@ public class UserServiceImpl implements UserService {
 		return input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
 	}
 
-	private String generateUserId(Role role) {
-		String userId = role.getName().substring(0, 1);
+	private String generateUserId(Long role) {
+		Role roleData = roleRepository.findById(role).get();
+		String userId = roleData.getName().substring(0, 1);
 		LocalDateTime localDate = LocalDateTime.now();
-		Long count = this.userRepository.countByRole(role);
+		Long count = this.userRepository.countByRole(roleData);
 		count++;
 		userId = userId.concat(String.valueOf(localDate.getYear())).concat(count.toString());
 		return userId;
+
+	}
+
+	@Override
+	public void deleteUser(Integer id) {
+		this.userRepository.deleteById(id);
 
 	}
 

@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.school.management.constant.Message;
 import com.project.school.management.request.LoginRequest;
 import com.project.school.management.request.UserRequest;
 import com.project.school.management.response.Response;
@@ -25,12 +27,7 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@GetMapping("/test")
-	public String test() {
-		return "welcome";
-	}
-
-	@PostMapping("createUser")
+	@PostMapping("saveUser")
 	public ResponseEntity<Response> saveUser(@RequestBody UserRequest userRequest) {
 		Response response = new Response();
 		response.succeed();
@@ -59,6 +56,16 @@ public class UserController {
 		Response response = new Response();
 		response.succeed();
 		response.setData(userService.getUser(id));
+		return ResponseEntity.ok().body(response);
+
+	}
+
+	@DeleteMapping("deleteUser/{id}")
+	public ResponseEntity<Object> deleteUser(@PathVariable Integer id) {
+		Response response = new Response();
+		response.succeed();
+		userService.deleteUser(id);
+		response.setMessage(Message.DELETED_SUCCESSFULLY);
 		return ResponseEntity.ok().body(response);
 
 	}

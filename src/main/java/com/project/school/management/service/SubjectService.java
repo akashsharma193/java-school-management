@@ -10,6 +10,6 @@ public interface SubjectService {
 
 	List<Subject> getList();
 
-	Subject getAddress(Long id);
+	Subject getSubject(Long id);
 
 }

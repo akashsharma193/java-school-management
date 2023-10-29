@@ -67,4 +67,10 @@ public class UserRequest {
 
 	Boolean isActive;
 
+	Long roleId;
+
+	Long classId;
+
+	Long schoolId;
+
 }

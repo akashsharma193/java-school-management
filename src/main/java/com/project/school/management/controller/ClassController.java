@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.school.management.constant.Message;
 import com.project.school.management.entity.ClassEntity;
 import com.project.school.management.response.Response;
 import com.project.school.management.service.ClassService;
@@ -27,6 +28,7 @@ public class ClassController {
 		Response response = new Response();
 		response.succeed();
 		response.setData(classService.save(dto));
+		response.setMessage(Message.CLASS_CREATED_SUCCESSFULLY);
 		return ResponseEntity.ok().body(response);
 	}
 

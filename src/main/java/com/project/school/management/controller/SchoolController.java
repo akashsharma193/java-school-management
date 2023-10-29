@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.school.management.constant.Message;
 import com.project.school.management.entity.School;
 import com.project.school.management.response.Response;
 import com.project.school.management.service.SchoolService;
@@ -29,6 +30,7 @@ public class SchoolController {
 		Response response = new Response();
 		response.succeed();
 		response.setData(schoolService.save(dto));
+		response.setMessage(Message.SCHOOL_CREATED_SUCCESSFULLY);
 		return ResponseEntity.ok().body(response);
 	}
 
