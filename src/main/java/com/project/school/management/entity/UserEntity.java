@@ -1,7 +1,11 @@
 package com.project.school.management.entity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.school.management.enums.Gender;
@@ -105,5 +109,11 @@ public class UserEntity {
 
 	@Column(name = "isActive", nullable = true)
 	private Boolean isActive;
+
+	@CreationTimestamp
+	private LocalDateTime created;
+
+	@UpdateTimestamp
+	private LocalDateTime updated;
 
 }

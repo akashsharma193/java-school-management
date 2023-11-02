@@ -1,5 +1,10 @@
 package com.project.school.management.entity;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,4 +30,10 @@ public class ExceptionEntity {
 
 	@Column(name = "trac", columnDefinition = "text", nullable = false)
 	private String trac;
+
+	@CreationTimestamp
+	private LocalDateTime created;
+
+	@UpdateTimestamp
+	private LocalDateTime updated;
 }

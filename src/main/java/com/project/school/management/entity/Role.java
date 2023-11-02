@@ -1,5 +1,10 @@
 package com.project.school.management.entity;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,5 +23,11 @@ public class Role {
 
 	@Column(name = "name", nullable = false)
 	private String name;
+
+	@CreationTimestamp
+	private LocalDateTime created;
+
+	@UpdateTimestamp
+	private LocalDateTime updated;
 
 }
