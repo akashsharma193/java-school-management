@@ -41,12 +41,19 @@ public class TimeTable {
 
 	@Column(name = "user_id")
 	private Long userId;
+	
+	@JoinColumn(name = "subject_id", insertable = false, updatable = false)
+	@ManyToOne(targetEntity = Subject.class, fetch = FetchType.EAGER)
+	private Subject subject;
 
-	@ElementCollection
-	@MapKeyColumn(name = "key")
-	@Column(name = "value")
-	@CollectionTable(name = "time_table_map_data", joinColumns = @JoinColumn(name = "time_table_id"))
-	private Map<String, String> timeTable;
+	@Column(name = "subject_id")
+	private Long subjectId;
+
+	@Column(name = "start_time")
+	private LocalDateTime startTime;
+	
+	@Column(name = "end_time")
+	private LocalDateTime endTime;
 
 	@CreationTimestamp
 	private LocalDateTime created;
