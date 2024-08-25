@@ -1,16 +1,16 @@
 package com.project.school.management.serviceImpl;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.project.school.management.constant.Message;
-import com.project.school.management.entity.Role;
 import com.project.school.management.entity.UserEntity;
 import com.project.school.management.exception.AccessDenied;
 import com.project.school.management.exception.InvalidArgumentException;
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
 		user.setGender(userRequest.getGender());
 		user.setPassword(bCrypt.encode(userRequest.getPassword()));
 		user.setUserName(username);
-		user.setUserId(generateUserId(userRequest.getRole()));
+		user.setUserId(this.generateUserId());
 		user.setHouseNumber(userRequest.getHouseNumber());
 		user.setStreet(userRequest.getStreet());
 		user.setCity(userRequest.getCity());
@@ -53,12 +53,12 @@ public class UserServiceImpl implements UserService {
 		user.setPinCode(userRequest.getPinCode());
 		user.setCountry(userRequest.getCountry());
 
-		user.setClassName(userRequest.getClassName());
-		user.setBook(userRequest.getBook());
+//		user.setClassName(userRequest.getClassName());
+//		user.setBook(userRequest.getBook());
 		user.setIsActive(userRequest.getIsActive());
 
-		user.setRole(userRequest.getRole());
-		user.setSchool(userRequest.getSchool());
+//		user.setRole(userRequest.getRole());
+//		user.setSchool(userRequest.getSchool());
 		userRepository.save(user);
 		return user;
 
@@ -69,15 +69,15 @@ public class UserServiceImpl implements UserService {
 		if (StringUtils.isEmpty(loginRequest.getUserName()) || StringUtils.isEmpty(loginRequest.getPassword())) {
 			throw new InvalidArgumentException();
 		}
-		Optional<UserEntity> opUser = userRepository.findByUserName(loginRequest.getUserName());
-		if (opUser.isEmpty()) {
+		UserEntity opUser = userRepository.findByUserId(loginRequest.getUserName());
+		if (ObjectUtils.isEmpty(opUser) ) {
 			throw new UserNotFoundException();
 		}
-		UserEntity dbUser = opUser.get();
+//		UserEntity dbUser = opUser.get();
 		BCryptPasswordEncoder bCrypt = new BCryptPasswordEncoder();
-		if (bCrypt.matches(loginRequest.getPassword(), dbUser.getPassword())) {
-			dbUser.setPassword(null);
-			return dbUser;
+		if (bCrypt.matches(loginRequest.getPassword(), opUser.getPassword())) {
+			opUser.setPassword(null);
+			return opUser;
 		} else {
 			throw new AccessDenied();
 		}
@@ -119,14 +119,18 @@ public class UserServiceImpl implements UserService {
 		return input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
 	}
 
-	private String generateUserId(Role role) {
-		String userId = role.getName().substring(0, 1);
-		LocalDateTime localDate = LocalDateTime.now();
-		Long count = this.userRepository.countByRole(role);
-		count++;
-		userId = userId.concat(String.valueOf(localDate.getYear())).concat(count.toString());
+	private String generateUserId() {
+		String userId = this.generateRandomAlphanumeric(5);
+		UserEntity user = userRepository.findByUserId(userId);
+		if(ObjectUtils.isNotEmpty(user)){
+			this.generateUserId();
+		}
 		return userId;
 
+	}
+	
+	private String generateRandomAlphanumeric(int length) {
+		return RandomStringUtils.randomAlphanumeric(length);
 	}
 
 }

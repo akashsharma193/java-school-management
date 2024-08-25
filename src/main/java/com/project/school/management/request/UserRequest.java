@@ -33,7 +33,8 @@ public class UserRequest {
 
 	Date dateOfBirth;
 
-	Role role;
+//	Role role;
+	String role;
 
 	String email;
 
@@ -57,13 +58,13 @@ public class UserRequest {
 
 	String country;
 
-	List<String> isParent;
+//	List<String> isParent;
 
-	ClassEntity className;
+//	ClassEntity className;
 
-	List<Book> book;
+//	List<Book> book;
 
-	School school;
+//	School school;
 
 	Boolean isActive;
 
