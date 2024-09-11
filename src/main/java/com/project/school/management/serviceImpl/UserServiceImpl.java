@@ -3,14 +3,13 @@ package com.project.school.management.serviceImpl;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.project.school.management.constant.Message;
 import com.project.school.management.entity.UserEntity;
 import com.project.school.management.exception.AccessDenied;
 import com.project.school.management.exception.InvalidArgumentException;
@@ -20,45 +19,34 @@ import com.project.school.management.request.LoginRequest;
 import com.project.school.management.request.UserRequest;
 import com.project.school.management.service.UserService;
 
+import net.bytebuddy.asm.Advice.This;
+
 @Service
 public class UserServiceImpl implements UserService {
+
+	private static final Logger log = LoggerFactory.getLogger(This.class);
 
 	@Autowired
 	private UserRepository userRepository;
 
 	@Override
 	public UserEntity saveUserDetail(UserRequest userRequest) {
-		if (userRequest.getPhone().length() < 10) {
-			throw new InvalidArgumentException(Message.INVALID_MOBILE_NUMBER);
-		}
-
 		UserEntity user = new UserEntity();
 		BCryptPasswordEncoder bCrypt = new BCryptPasswordEncoder();
-		String username = generateUserName(userRequest.getEmail(), userRequest.getPhone());
-		user.setFirstName(userRequest.getFirstName());
-		user.setLastName(userRequest.getLastName());
-		user.setFatherName(userRequest.getFatherName());
-		user.setMotherName(userRequest.getMotherName());
-		user.setDateOfBirth(userRequest.getDateOfBirth());
-		user.setEmail(userRequest.getEmail());
-		user.setPhone(userRequest.getPhone());
-		user.setGender(userRequest.getGender());
-		user.setPassword(bCrypt.encode(userRequest.getPassword()));
-		user.setUserName(username);
-		user.setUserId(this.generateUserId());
-		user.setHouseNumber(userRequest.getHouseNumber());
-		user.setStreet(userRequest.getStreet());
-		user.setCity(userRequest.getCity());
-		user.setState(userRequest.getState());
-		user.setPinCode(userRequest.getPinCode());
-		user.setCountry(userRequest.getCountry());
 
-//		user.setClassName(userRequest.getClassName());
-//		user.setBook(userRequest.getBook());
-		user.setIsActive(userRequest.getIsActive());
+		log.info("call function generateUserName");
+		String username = generateUserName(userRequest.getEmail(), userRequest.getPhone());
+		user.setUserName(username);
 
 		user.setRole(userRequest.getRole());
-//		user.setSchool(userRequest.getSchool());
+
+		user.setEmail(userRequest.getEmail());
+		user.setPassword(bCrypt.encode(userRequest.getPassword()));
+		user.setPhone(userRequest.getPhone());
+		user.setGender(userRequest.getGender());
+		user.setName(userRequest.getName());
+
+		log.info("User save");
 		userRepository.save(user);
 		return user;
 
@@ -69,15 +57,17 @@ public class UserServiceImpl implements UserService {
 		if (StringUtils.isEmpty(loginRequest.getUserName()) || StringUtils.isEmpty(loginRequest.getPassword())) {
 			throw new InvalidArgumentException();
 		}
-		UserEntity opUser = userRepository.findByUserId(loginRequest.getUserName());
-		if (ObjectUtils.isEmpty(opUser) ) {
+		log.info("login by username");
+		Optional<UserEntity> opUser = userRepository.findByUserName(loginRequest.getUserName());
+		if (opUser.isEmpty()) {
 			throw new UserNotFoundException();
 		}
-//		UserEntity dbUser = opUser.get();
+		UserEntity dbUser = opUser.get();
 		BCryptPasswordEncoder bCrypt = new BCryptPasswordEncoder();
-		if (bCrypt.matches(loginRequest.getPassword(), opUser.getPassword())) {
-			opUser.setPassword(null);
-			return opUser;
+		if (bCrypt.matches(loginRequest.getPassword(), dbUser.getPassword())) {
+			log.info("login successfully by username");
+			dbUser.setPassword(null);
+			return dbUser;
 		} else {
 			throw new AccessDenied();
 		}
@@ -85,11 +75,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<UserEntity> getUserList() {
+		log.info("inside get dtudent method");
 		return userRepository.findAll();
 	}
 
 	@Override
 	public UserEntity getUser(Integer id) {
+		log.info("inside get student by id");
 		Optional<UserEntity> user = userRepository.findById(id);
 		if (user.isEmpty()) {
 			throw new UserNotFoundException();
@@ -98,7 +90,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	// method to generateUserName
-	private String generateUserName(String email, String phone) {
+	private String generateUserName(String email, Long phone) {
+		log.info("inside method generateUserName and call sanitizeString function");
 
 		String[] parts = email.split("@");
 
@@ -106,6 +99,7 @@ public class UserServiceImpl implements UserService {
 		String contact = sanitizedPhoneNumber.substring(sanitizedPhoneNumber.length() - 4);
 
 		// Concatenate the sanitized email and phone number
+		log.info("concatenate email and phone");
 		String concatenatedString = parts[0] + contact;
 
 		if (this.userRepository.findByUserName(concatenatedString).isPresent()) {
@@ -116,21 +110,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private String sanitizeString(String input) {
+		log.info("inside sanitizeString method");
 		return input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-	}
-
-	private String generateUserId() {
-		String userId = this.generateRandomAlphanumeric(5);
-		UserEntity user = userRepository.findByUserId(userId);
-		if(ObjectUtils.isNotEmpty(user)){
-			this.generateUserId();
-		}
-		return userId;
-
-	}
-	
-	private String generateRandomAlphanumeric(int length) {
-		return RandomStringUtils.randomAlphanumeric(length);
 	}
 
 }

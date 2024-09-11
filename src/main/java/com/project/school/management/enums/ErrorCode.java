@@ -4,8 +4,6 @@ public enum ErrorCode {
 
 	USER_ALREADY_EXIST,
 
-	DATA_NOT_EXIST,
-
 	ROLE_DOES_NOT_EXIST,
 
 	FIELD_ALREADY_EXIST,
@@ -16,13 +14,9 @@ public enum ErrorCode {
 
 	ACCED_DENIED,
 
-	INVALID_PHONE_NUMBER,
-
-	DATA_ALREADY_EXIST,
-
 	UNKNOWN;
 
-	private final String prefix = "USERMANAGEMENT.";
+	private final String prefix = "UserManagement.";
 
 	public String code() {
 		StringBuilder code = new StringBuilder();

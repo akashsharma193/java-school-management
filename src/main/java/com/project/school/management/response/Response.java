@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.project.school.management.enums.ErrorCode;
 import com.project.school.management.exception.CustomException;
 
+
 public class Response {
 
 	private Boolean success;
@@ -33,7 +34,6 @@ public class Response {
 		this.fail();
 
 		String errorCodeString = ErrorCode.UNKNOWN.code();
-		this.setMessage(exception.getMessage());
 
 		if (exception instanceof CustomException) {
 
@@ -41,11 +41,9 @@ public class Response {
 			ErrorCode errorCode = ex.getErrorCode();
 
 			errorCodeString = errorCode.code();
-			this.setMessage(ex.getMesage());
 		}
 
 		this.setErrorCode(errorCodeString);
-
 	}
 
 	public Response(Throwable exception, String message) {
